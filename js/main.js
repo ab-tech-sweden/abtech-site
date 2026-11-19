@@ -83,6 +83,73 @@
     });
   }
 
+  /* Auto-advancing sliders (home news/reviews and product ribbon). */
+  function initSlider(root) {
+    var slides = Array.prototype.slice.call(root.querySelectorAll(".slide"));
+    if (!slides.length) return;
+    var dotsBox = root.querySelector(".slider-dots");
+    var prevBtn = root.querySelector(".slider-prev");
+    var nextBtn = root.querySelector(".slider-next");
+    var i = 0;
+    var timer = null;
+    var interval = parseInt(root.getAttribute("data-interval") || "7000", 10);
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (dotsBox) {
+      dotsBox.innerHTML = "";
+      slides.forEach(function (_, n) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.setAttribute("aria-label", "Go to slide " + (n + 1));
+        b.addEventListener("click", function () { go(n, true); });
+        dotsBox.appendChild(b);
+      });
+    }
+
+    function go(n, user) {
+      i = (n + slides.length) % slides.length;
+      slides.forEach(function (s, k) {
+        s.classList.toggle("is-active", k === i);
+      });
+      if (dotsBox) {
+        Array.prototype.forEach.call(dotsBox.querySelectorAll("button"), function (b, k) {
+          if (k === i) b.setAttribute("aria-current", "true");
+          else b.removeAttribute("aria-current");
+        });
+      }
+      if (user || !reduce) restart();
+    }
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+    function restart() {
+      stop();
+      if (reduce || slides.length < 2) return;
+      timer = setInterval(function () { go(i + 1, false); }, interval);
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", function () { go(i - 1, true); });
+    if (nextBtn) nextBtn.addEventListener("click", function () { go(i + 1, true); });
+    root.addEventListener("mouseenter", stop);
+    root.addEventListener("mouseleave", restart);
+    root.addEventListener("focusin", stop);
+    root.addEventListener("focusout", function (e) {
+      if (!root.contains(e.relatedTarget)) restart();
+    });
+    var x0 = null;
+    root.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    root.addEventListener("touchend", function (e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) go(i + (dx < 0 ? 1 : -1), true);
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) stop(); else restart();
+    });
+    go(0, false);
+  }
+  document.querySelectorAll("[data-slider]").forEach(initSlider);
+
   /* Contact form → Web3Forms (or Formspree if the action is changed). */
   var form = document.querySelector("form[data-contact]");
   if (!form) return;

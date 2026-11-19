@@ -24,12 +24,12 @@ Samma sidor som idag, med samma webbadresser:
 | About Us | `about-us/index.html` |
 | News | `news/index.html` |
 | Contact | `contact/index.html` |
-| BLADELIUS | `bladelius/index.html` |
+| Sister brands (Bladelius och Norse Audio) | `bladelius/index.html` |
 | Reviews | `reviews/index.html` |
 
 Gemensam formgivning ligger i `css/style.css`. Lite JavaScript för mobilmenyn, bildgalleriet och kontaktformuläret ligger i `js/main.js`. Logotyp, produktbilder, nyhetsbilder och recensionsbilder ligger i `images/`.
 
-Startsidan har samma stora foto som idag. Under bilden finns en enkel produktöversikt (finns inte på den nuvarande startsidan) så att man kommer vidare lättare. På Products-sidan är TAMP klickbar, vilket den inte var på Mozello-sajten. Alla 33 nyheter visas direkt, utan Mozellos “Load more”.
+Startsidan har samma stora foto som idag. Under bilden ligger ett rullande urval av senaste nyheter och recensioner, ett stillsamt bildspel med produkter (länk till Products) och en kort hänvisning till Instagram och Facebook. Själva produktlistan ligger på Products-sidan. Längst ned på Products, och på sidan Sister brands (`bladelius/`), finns Bladelius och Norse Audio. På Products-sidan är TAMP klickbar, vilket den inte var på Mozello-sajten. Alla 33 nyheter visas direkt, utan Mozellos “Load more”.
 
 ## Hur du redigerar texter och bilder
 
@@ -95,6 +95,25 @@ Domänen ab-tech.se ligger idag hos Mozello. För att ta över den:
 4. Se till att både `ab-tech.se` och `www.ab-tech.se` fungerar, och att den ena omdirigerar till den andra.
 
 Rör inte Mozello-DNS förrän den nya sajten är uppladdad och testad på den tillfälliga adressen.
+
+### robots.txt och sitemap (vid publicering)
+
+Filen `sitemap.xml` ligger redan i roten, med absoluta adresser på https://ab-tech.se/. `robots.txt` blockerar fortfarande sökmotorer med `Disallow: /` så länge sajten bara är en förhandsvisning. Sitemap-raden finns redan:
+
+```
+Sitemap: https://ab-tech.se/sitemap.xml
+```
+
+När sajten går live, ändra `robots.txt` till:
+
+```
+User-agent: *
+Allow: /
+
+Sitemap: https://ab-tech.se/sitemap.xml
+```
+
+Lägg därefter till sajten i Google Search Console och skicka in `https://ab-tech.se/sitemap.xml`.
 
 ### 4. Säg upp Mozello först när den nya sajten är live
 

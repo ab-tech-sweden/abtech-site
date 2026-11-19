@@ -1,2 +1,4 @@
 User-agent: *
 Disallow: /
+
+Sitemap: https://ab-tech.se/sitemap.xml

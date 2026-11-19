@@ -12,7 +12,7 @@ NAV = [
     ("About Us", "about-us/", "about-us"),
     ("News", "news/", "news"),
     ("Contact", "contact/", "contact"),
-    ("BLADELIUS", "bladelius/", "bladelius"),
+    ("Sister brands", "bladelius/", "bladelius"),
     ("Reviews", "reviews/", "reviews"),
 ]
 
@@ -23,6 +23,9 @@ IG = "https://www.instagram.com/ab_tech_sweden/"
 ICON_FB = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-5 2.2-5 5v2H6v4h3v8h4v-8h3l1-4h-4V9c0-.6.4-1 1-1z"/></svg>'''
 ICON_IG = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 1.6A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8zM17.2 6.6a.9.9 0 1 1-.9.9.9.9 0 0 1 .9-.9z"/></svg>'''
 ICON_MENU = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>'''
+
+ASSET_V = "3"
+SITE = "https://ab-tech.se"
 
 
 def prefix(depth: int) -> str:
@@ -71,25 +74,54 @@ def footer(depth: int) -> str:
       </div>
     </div>
   </footer>
-  <script src="{p}js/main.js"></script>'''
+  <script src="{p}js/main.js?v={ASSET_V}"></script>'''
 
 
-def page(depth: int, current: str, title: str, body: str, extra_head: str = "", description: str = "") -> str:
+def jsonld_tag(data) -> str:
+    if not data:
+        return ""
+    payload = json.dumps(data, ensure_ascii=False, indent=2)
+    return f'  <script type="application/ld+json">\n{payload}\n  </script>\n'
+
+
+def org_jsonld() -> dict:
+    return {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Alexander Bladelius Technologies AB",
+        "brand": "AB Tech",
+        "url": f"{SITE}/",
+        "logo": f"{SITE}/images/brand/logo.jpg",
+    }
+
+
+def product_jsonld(name: str, description: str, image_file: str) -> dict:
+    return {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": name,
+        "description": description,
+        "brand": {"@type": "Brand", "name": "AB Tech"},
+        "image": f"{SITE}/images/products/{image_file}",
+    }
+
+
+def page(depth: int, current: str, title: str, body: str, extra_head: str = "", description: str = "", json_ld=None, early_head: str = "") -> str:
     p = prefix(depth)
     desc = description or "High-end audio and tech products from Alexander Bladelius Technologies AB. Designed and made in Sweden."
     return f'''<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+{early_head}  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{htmlmod.escape(title)}</title>
   <meta name="description" content="{htmlmod.escape(desc)}">
   <link rel="icon" href="{p}favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{p}css/style.css">
-{extra_head}</head>
+  <link rel="stylesheet" href="{p}css/style.css?v={ASSET_V}">
+{extra_head}{jsonld_tag(json_ld)}</head>
 <body>
 {header(depth, current)}
 {body}
@@ -108,44 +140,164 @@ def write(rel: str, text: str):
 
 # ---------- pages ----------
 
+def _plain(html: str, limit: int = 160) -> str:
+    text = news_text_only(rewrite_news_body(html)) if html else ""
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = htmlmod.unescape(text)
+    text = re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"\s+([.,;:!?])", r"\1", text)
+    if len(text) > limit:
+        text = text[:limit].rsplit(" ", 1)[0] + "…"
+    return text
+
+
+def _news_img(url: str, depth: int = 0) -> str:
+    src = map_news_src(url or "")
+    if depth == 0 and src.startswith("../"):
+        src = src[3:]
+    return src
+
+
 def home():
+    # Latest news from the crawl, mixed with a couple of press reviews.
+    posts = json.loads(NEWS_JSON.read_text(encoding="utf-8")) if NEWS_JSON.exists() else []
+    slides = []
+    review_inserts = {
+        1: (
+            "Review",
+            "images/reviews/klar-highfidelity.jpg",
+            "Review of KLAR by High Fidelity",
+            "https://highfidelity.pl/@main-1620&lang=en",
+            "A press review of the KLAR USB isolator.",
+        ),
+        4: (
+            "Review",
+            "images/reviews/still-soundrebels.jpg",
+            "Review of STILL by Soundrebels",
+            "https://soundrebels.com/ab-tech-still-2/",
+            "A press review of the STILL Ethernet isolator.",
+        ),
+    }
+    news_used = 0
+    total = 6
+    for i in range(total):
+        if i in review_inserts:
+            kind, img, title, url, excerpt = review_inserts[i]
+            slides.append((kind, img, title, "", url, excerpt, True))
+        elif news_used < len(posts):
+            post = posts[news_used]
+            news_used += 1
+            images = post.get("images") or []
+            img = _news_img(images[0]["src"]) if images else ""
+            excerpt = _plain(post.get("body_html") or "")
+            if re.match(r"https?://", excerpt):
+                excerpt = ""
+            slides.append(("News", img, post["title"], post.get("date") or "", "news/", excerpt, False))
+
+    slide_html = []
+    for idx, (kind, img, title, date, url, excerpt, external) in enumerate(slides):
+        rel = ' target="_blank" rel="noopener"' if external else ""
+        img_html = f'<img src="{htmlmod.escape(img)}" alt="{htmlmod.escape(title)}">' if img else ""
+        meta = f"{kind}" + (f" · {htmlmod.escape(date)}" if date else "")
+        active = " is-active" if idx == 0 else ""
+        excerpt_html = f"<p>{htmlmod.escape(excerpt)}</p>" if excerpt else ""
+        slide_html.append(
+            f'        <article class="slide{active}">\n'
+            f'          <a href="{htmlmod.escape(url)}"{rel}>\n'
+            f'            <div class="slide-image">{img_html}</div>\n'
+            f'            <div class="slide-body">\n'
+            f'              <p class="kicker">{meta}</p>\n'
+            f'              <h3>{htmlmod.escape(title)}</h3>\n'
+            f'              {excerpt_html}\n'
+            f'            </div>\n'
+            f'          </a>\n'
+            f'        </article>'
+        )
+
+    products = [
+        ("still/", "images/products/still.jpg", "STILL", "Ethernet Isolator"),
+        ("ren/", "images/products/ren.jpg", "REN", "Ethernet Isolator"),
+        ("klar/", "images/products/klar.jpg", "KLAR", "USB Isolator"),
+        ("frid/", "images/products/frid.jpg", "FRID", "Power Cleaner"),
+        ("tamp/", "images/products/tamp.jpg", "TAMP", "Ethernet Cable"),
+    ]
+    prod_slides = []
+    for idx, (url, img, name, kind) in enumerate(products):
+        active = " is-active" if idx == 0 else ""
+        prod_slides.append(
+            f'        <article class="slide{active}">\n'
+            f'          <a href="{url}">\n'
+            f'            <div class="ribbon-image"><img src="{img}" alt="{name} {kind}"></div>\n'
+            f'            <div class="ribbon-caption">\n'
+            f'              <strong>{name}</strong>\n'
+            f'              <span>{kind}</span>\n'
+            f'            </div>\n'
+            f'          </a>\n'
+            f'        </article>'
+        )
+
     extra = '  <style>.hero { background-image: url("images/hero/home.jpg"); background-position: 56% 68%; }</style>\n'
-    body = f'''  <main>
-    <section class="hero" aria-label="AB-Tech">
-      <div class="hero-caption">
-        <a href="products/">Products</a>
-      </div>
-    </section>
-    <section class="home-products">
-      <div class="wrap">
-        <h2>Products</h2>
-        <div class="product-grid">
-          <a class="product-card" href="still/">
-            <div class="thumb"><img src="images/products/still.jpg" alt="STILL Ethernet Isolator"></div>
-            <div class="label">STILL — Ethernet Isolator</div>
-          </a>
-          <a class="product-card" href="ren/">
-            <div class="thumb"><img src="images/products/ren.jpg" alt="REN Ethernet Isolator"></div>
-            <div class="label">REN — Ethernet Isolator</div>
-          </a>
-          <a class="product-card" href="klar/">
-            <div class="thumb"><img src="images/products/klar.jpg" alt="KLAR USB Isolator"></div>
-            <div class="label">KLAR — USB Isolator</div>
-          </a>
-          <a class="product-card" href="frid/">
-            <div class="thumb"><img src="images/products/frid.jpg" alt="FRID Power Cleaner"></div>
-            <div class="label">FRID — Power Cleaner</div>
-          </a>
-          <a class="product-card" href="tamp/">
-            <div class="thumb"><img src="images/products/tamp.jpg" alt="TAMP Ethernet Cable"></div>
-            <div class="label">TAMP — Ethernet Cable</div>
-          </a>
-        </div>
-      </div>
-    </section>
-  </main>'''
+    body = (
+        '  <main>\n'
+        '    <section class="hero" aria-label="AB-Tech">\n'
+        '      <div class="hero-caption">\n'
+        '        <a href="products/">Products</a>\n'
+        '      </div>\n'
+        '    </section>\n'
+        '\n'
+        '    <section class="home-latest">\n'
+        '      <div class="wrap">\n'
+        '        <div class="section-head">\n'
+        '          <h2>Latest</h2>\n'
+        '          <a class="text-link" href="news/">All news</a>\n'
+        '        </div>\n'
+        '        <div class="slider" data-slider data-interval="7000" aria-label="Latest news and reviews">\n'
+        '          <div class="slider-viewport">\n'
+        + "\n".join(slide_html) + "\n"
+        '          </div>\n'
+        '          <div class="slider-controls">\n'
+        '            <button type="button" class="slider-prev" aria-label="Previous"></button>\n'
+        '            <div class="slider-dots" role="tablist" aria-label="Choose slide"></div>\n'
+        '            <button type="button" class="slider-next" aria-label="Next"></button>\n'
+        '          </div>\n'
+        '        </div>\n'
+        '      </div>\n'
+        '    </section>\n'
+        '\n'
+        '    <section class="home-ribbon">\n'
+        '      <div class="wrap">\n'
+        '        <div class="section-head">\n'
+        '          <h2>Products</h2>\n'
+        '          <a class="text-link" href="products/">View all</a>\n'
+        '        </div>\n'
+        '        <div class="slider ribbon-slider" data-slider data-interval="6500" aria-label="Product images">\n'
+        '          <div class="slider-viewport">\n'
+        + "\n".join(prod_slides) + "\n"
+        '          </div>\n'
+        '          <div class="slider-controls">\n'
+        '            <button type="button" class="slider-prev" aria-label="Previous"></button>\n'
+        '            <div class="slider-dots" role="tablist" aria-label="Choose product"></div>\n'
+        '            <button type="button" class="slider-next" aria-label="Next"></button>\n'
+        '          </div>\n'
+        '        </div>\n'
+        '      </div>\n'
+        '    </section>\n'
+        '\n'
+        '    <section class="home-follow">\n'
+        '      <div class="wrap">\n'
+        '        <h2>Follow</h2>\n'
+        '        <p>Updates from the workshop and the road, on Instagram and Facebook.</p>\n'
+        '        <div class="follow-links">\n'
+        f'          <a href="{IG}" target="_blank" rel="noopener">Instagram @ab_tech_sweden</a>\n'
+        f'          <a href="{FB}" target="_blank" rel="noopener">Facebook</a>\n'
+        '        </div>\n'
+        '      </div>\n'
+        '    </section>\n'
+        '  </main>'
+    )
     write("index.html", page(0, "home", "AB-Tech – Home", body, extra_head=extra,
-                             description="High-end audio isolators, cables and power products from Alexander Bladelius Technologies AB. Designed and made in Sweden."))
+                             description="High-end audio isolators, cables and power products from Alexander Bladelius Technologies AB. Designed and made in Sweden.",
+                             json_ld=org_jsonld()))
 
 
 def products():
@@ -193,9 +345,31 @@ def products():
         </div>
       </section>
 
-      <section class="product-group">
-        <h2>Electronics by Bladelius</h2>
-        <p><a href="https://bladelius.com/products" target="_blank" rel="noopener">bladelius.com</a></p>
+      <section class="product-group sister-mini">
+        <h2>Sister brands</h2>
+        <div class="sister-mini-grid">
+          <article class="sister-mini-card">
+            <a class="thumb" href="https://www.bladelius.com/" target="_blank" rel="noopener">
+              <img src="../images/gallery/bladelius/1.webp" alt="Bladelius amplifier">
+            </a>
+            <div class="sister-mini-body">
+              <h3>Bladelius</h3>
+              <p>High-performance audio electronics, designed in Sweden.</p>
+              <a class="text-link" href="https://www.bladelius.com/" target="_blank" rel="noopener">Visit website</a>
+            </div>
+          </article>
+          <article class="sister-mini-card">
+            <a class="thumb" href="https://www.norseaudio.se/" target="_blank" rel="noopener">
+              <img src="../images/pages/norse.jpg" alt="Norse Audio component">
+            </a>
+            <div class="sister-mini-body">
+              <h3>Norse Audio</h3>
+              <p>A modular audio system, powered by Bladelius.</p>
+              <a class="text-link" href="https://www.norseaudio.se/" target="_blank" rel="noopener">Visit website</a>
+            </div>
+          </article>
+        </div>
+        <p class="sister-more"><a class="text-link" href="../bladelius/">More about our sister brands</a></p>
       </section>
     </div>
   </main>'''
@@ -235,7 +409,9 @@ def product_page(slug, title, heading, intro_html, specs, hero, hero_alt, galler
       </div>{g}
     </div>
   </main>'''
-    write(f"{slug}/index.html", page(1, current, title, body, description=f"{heading}. High-end audio from AB-Tech, designed and made in Sweden."))
+    desc = f"{heading}. High-end audio from AB-Tech, designed and made in Sweden."
+    write(f"{slug}/index.html", page(1, current, title, body, description=desc,
+                                     json_ld=product_jsonld(heading, desc, hero)))
 
 
 def still():
@@ -403,25 +579,40 @@ def contact():
 
 
 def bladelius():
-    items = []
-    for i in range(1, 5):
-        src = f"../images/gallery/bladelius/{i}.webp"
-        items.append(f'        <a href="{src}" data-lightbox><img src="{src}" alt="Bladelius product photo {i}"></a>')
-    g = "\n".join(items)
-    body = f'''  <main class="page">
+    body = f"""  <main class="page">
     <div class="wrap">
-      <h1 class="visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">BLADELIUS</h1>
-      <p><a href="https://www.bladelius.com" target="_blank" rel="noopener">Visit the Bladelius website here</a></p>
-      <a class="bladelius-logo" href="https://www.bladelius.com" target="_blank" rel="noopener">
-        <img src="../images/brand/bladelius-logo.jpg" alt="Bladelius">
-      </a>
-      <div class="gallery">
-{g}
+      <header class="page-header">
+        <h1>Sister brands</h1>
+        <p class="lede">AB-Tech is part of a small family of Swedish audio companies, each with its own website.</p>
+      </header>
+
+      <div class="sister-grid">
+        <article class="sister-card">
+          <div class="sister-photo">
+            <img src="../images/gallery/bladelius/1.webp" alt="Bladelius amplifier">
+          </div>
+          <div class="sister-body">
+            <img class="sister-wordmark" src="../images/brand/bladelius-logo.jpg" alt="Bladelius">
+            <p>Bladelius designs high-performance audio electronics, from amplifiers and preamplifiers to related components, for listeners around the world.</p>
+            <a class="btn" href="https://www.bladelius.com/" target="_blank" rel="noopener">Visit website</a>
+          </div>
+        </article>
+
+        <article class="sister-card">
+          <div class="sister-photo">
+            <img src="../images/pages/norse.jpg" alt="Norse Audio component">
+          </div>
+          <div class="sister-body">
+            <img class="sister-wordmark norse" src="../images/brand/norse-logo.png" alt="Norse Audio">
+            <p>Norse Audio, a sub-brand of Bladelius, makes a modular high-fidelity system — the X1 power amplifier, X2 pre-amplifier and X5 power supply — built for flexibility and a clean, stable sound.</p>
+            <a class="btn" href="https://www.norseaudio.se/" target="_blank" rel="noopener">Visit website</a>
+          </div>
+        </article>
       </div>
     </div>
-  </main>'''
-    write("bladelius/index.html", page(1, "bladelius", "AB-Tech – BLADELIUS", body,
-          description="Visit Bladelius at bladelius.com."))
+  </main>"""
+    write("bladelius/index.html", page(1, "bladelius", "AB-Tech – Sister brands", body,
+          description="Sister brands of AB-Tech: Bladelius and Norse Audio."))
 
 
 def reviews():
@@ -551,6 +742,64 @@ def news():
           description="News and show appearances from AB-Tech."))
 
 
+SITEMAP_PATHS = [
+    "",
+    "products/",
+    "still/",
+    "ren/",
+    "klar/",
+    "frid/",
+    "tamp/",
+    "about-us/",
+    "news/",
+    "contact/",
+    "bladelius/",
+    "reviews/",
+]
+
+
+def write_sitemap():
+    urls = "\n".join(
+        f"  <url>\n    <loc>{SITE}/{path}</loc>\n  </url>"
+        for path in SITEMAP_PATHS
+    )
+    write("sitemap.xml", f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{urls}
+</urlset>
+""")
+
+
+def write_robots():
+    write("robots.txt", """User-agent: *
+Disallow: /
+
+Sitemap: https://ab-tech.se/sitemap.xml
+""")
+
+
+def not_found():
+    early = """  <script>
+  (function () {
+    var preview = location.pathname.indexOf("/abtech-site/") === 0;
+    document.write('<base href="' + (preview ? "/abtech-site/" : "/") + '">');
+  })();
+  </script>
+"""
+    body = """  <main class="page">
+    <div class="wrap error-page">
+      <h1>Page not found</h1>
+      <p class="lede">The page you are looking for does not exist.</p>
+      <p class="error-links">
+        <a class="btn" href="index.html">Home</a>
+        <a class="btn btn-ghost" href="products/">Products</a>
+      </p>
+    </div>
+  </main>"""
+    write("404.html", page(0, "", "AB-Tech – Page not found", body, early_head=early,
+                           description="This page could not be found on the AB-Tech website."))
+
+
 def main():
     home()
     products()
@@ -564,6 +813,9 @@ def main():
     bladelius()
     reviews()
     news()
+    write_sitemap()
+    write_robots()
+    not_found()
     print("done")
 
 
