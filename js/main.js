@@ -17,8 +17,8 @@
     });
   }
 
-  /* Lightbox for elements with data-lightbox */
-  var boxes = document.querySelectorAll("[data-lightbox]");
+  /* Lightbox with prev/next, arrow keys and swipe */
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("[data-lightbox]"));
   if (boxes.length) {
     var overlay = document.createElement("div");
     overlay.className = "lightbox";
@@ -26,35 +26,60 @@
     overlay.setAttribute("aria-modal", "true");
     overlay.setAttribute("aria-label", "Image preview");
     overlay.innerHTML =
-      '<button type="button" class="lightbox-close" aria-label="Close">&times;</button><img alt="">';
+      '<button type="button" class="lightbox-close" aria-label="Close">&times;</button>' +
+      '<button type="button" class="lightbox-nav lightbox-prev" aria-label="Previous">&#8249;</button>' +
+      '<img alt="">' +
+      '<button type="button" class="lightbox-nav lightbox-next" aria-label="Next">&#8250;</button>' +
+      '<div class="lightbox-count"></div>';
     document.body.appendChild(overlay);
     var img = overlay.querySelector("img");
     var closeBtn = overlay.querySelector(".lightbox-close");
+    var prevBtn = overlay.querySelector(".lightbox-prev");
+    var nextBtn = overlay.querySelector(".lightbox-next");
+    var count = overlay.querySelector(".lightbox-count");
+    var group = [], idx = 0;
 
-    function close() {
-      overlay.classList.remove("is-open");
-      img.removeAttribute("src");
+    function srcOf(el) { return el.getAttribute("href") || (el.querySelector("img") || {}).src; }
+    function show(i) {
+      idx = (i + group.length) % group.length;
+      var el = group[idx];
+      img.src = srcOf(el);
+      img.alt = ((el.querySelector("img") || {}).alt) || "";
+      count.textContent = group.length > 1 ? (idx + 1) + " / " + group.length : "";
+      var multi = group.length > 1;
+      prevBtn.style.display = nextBtn.style.display = multi ? "" : "none";
+      var n = new Image(); n.src = srcOf(group[(idx + 1) % group.length]);
     }
-    function open(src, alt) {
-      img.src = src;
-      img.alt = alt || "";
-      overlay.classList.add("is-open");
-      closeBtn.focus();
-    }
+    function isOpen() { return overlay.classList.contains("is-open"); }
+    function close() { overlay.classList.remove("is-open"); img.removeAttribute("src"); }
 
     boxes.forEach(function (el) {
       el.addEventListener("click", function (e) {
         e.preventDefault();
-        var src = el.getAttribute("href") || (el.querySelector("img") || {}).src;
-        var alt = ((el.querySelector("img") || {}).alt) || "";
-        if (src) open(src, alt);
+        var parent = el.closest(".gallery") || document;
+        group = Array.prototype.slice.call(parent.querySelectorAll("[data-lightbox]"));
+        show(group.indexOf(el));
+        overlay.classList.add("is-open");
+        closeBtn.focus();
       });
     });
+    prevBtn.addEventListener("click", function (e) { e.stopPropagation(); show(idx - 1); });
+    nextBtn.addEventListener("click", function (e) { e.stopPropagation(); show(idx + 1); });
     overlay.addEventListener("click", function (e) {
       if (e.target === overlay || e.target === closeBtn) close();
     });
     document.addEventListener("keydown", function (e) {
+      if (!isOpen()) return;
       if (e.key === "Escape") close();
+      else if (e.key === "ArrowRight") { e.preventDefault(); show(idx + 1); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); show(idx - 1); }
+    });
+    var x0 = null;
+    overlay.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    overlay.addEventListener("touchend", function (e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) show(idx + (dx < 0 ? 1 : -1));
     });
   }
 

@@ -597,3 +597,18 @@ main { flex: 1 0 auto; }
   html { scroll-behavior: auto; }
   .gallery img, .product-card img, .review-card img { transition: none; }
 }
+
+.lightbox-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(0,0,0,.35); color: #e6e6e6; border: 0; cursor: pointer;
+  font-size: 48px; line-height: 1; width: 56px; height: 80px; border-radius: 4px;
+  transition: background .2s;
+}
+.lightbox-nav:hover { background: rgba(255,255,255,.12); }
+.lightbox-prev { left: 16px; }
+.lightbox-next { right: 16px; }
+.lightbox-count {
+  position: absolute; bottom: 18px; left: 0; right: 0; text-align: center;
+  color: #bbb; font-size: 13px; letter-spacing: .15em;
+}
+@media (max-width: 600px) { .lightbox-nav { width: 40px; height: 60px; font-size: 36px; } }
