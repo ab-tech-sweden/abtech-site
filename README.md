@@ -24,12 +24,12 @@ Samma sidor som idag, med samma webbadresser:
 | About Us | `about-us/index.html` |
 | News | `news/index.html` |
 | Contact | `contact/index.html` |
-| Family (The AB Tech family: Bladelius och Norse Audio) | `bladelius/index.html` |
+| Family (The Bladelius family: AB Tech, Bladelius och Norse Audio) | `bladelius/index.html` |
 | Reviews | `reviews/index.html` |
 
 Gemensam formgivning ligger i `css/style.css`. Lite JavaScript för mobilmenyn, bildgalleriet och kontaktformuläret ligger i `js/main.js`. Logotyp, produktbilder, nyhetsbilder och recensionsbilder ligger i `images/`.
 
-Startsidan har samma stora foto som idag, utan knapp i bilden. Under bilden ligger ett rullande urval av senaste nyheter och recensioner, och en kort hänvisning till Instagram och Facebook. Själva produktlistan ligger på Products-sidan. Längst ned på Products, och på sidan Family (`bladelius/`), finns Bladelius och Norse Audio som en del av The AB Tech family. På Products-sidan är TAMP klickbar, vilket den inte var på Mozello-sajten. Alla 33 nyheter visas direkt, utan Mozellos “Load more”.
+Startsidan har samma stora foto som idag, utan knapp i bilden. Under bilden ligger ett rullande urval av senaste nyheter och recensioner, och en kort hänvisning till Instagram och Facebook. Själva produktlistan ligger på Products-sidan. Längst ned på Products, och på sidan Family (`bladelius/`), finns Bladelius och Norse Audio som en del av The Bladelius family. På Products-sidan är TAMP klickbar, vilket den inte var på Mozello-sajten. Alla 33 nyheter visas direkt, utan Mozellos “Load more”.
 
 ## Hur du redigerar texter och bilder
 

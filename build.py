@@ -24,7 +24,7 @@ ICON_FB = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-
 ICON_IG = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 1.6A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8zM17.2 6.6a.9.9 0 1 1-.9.9.9.9 0 0 1 .9-.9z"/></svg>'''
 ICON_MENU = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>'''
 
-ASSET_V = "4"
+ASSET_V = "5"
 SITE = "https://ab-tech.se"
 
 
@@ -243,7 +243,7 @@ def home():
         '        <h2>Follow</h2>\n'
         '        <p>Updates from the workshop and the road, on Instagram and Facebook.</p>\n'
         '        <div class="follow-links">\n'
-        f'          <a href="{IG}" target="_blank" rel="noopener">Instagram @ab_tech_sweden</a>\n'
+        f'          <a href="{IG}" target="_blank" rel="noopener">Instagram</a>\n'
         f'          <a href="{FB}" target="_blank" rel="noopener">Facebook</a>\n'
         '        </div>\n'
         '      </div>\n'
@@ -301,7 +301,7 @@ def products():
       </section>
 
       <section class="product-group sister-mini">
-        <h2>Our family</h2>
+        <h2>The Bladelius family</h2>
         <div class="sister-mini-grid">
           <article class="sister-mini-card">
             <a class="thumb" href="https://www.bladelius.com/" target="_blank" rel="noopener">
@@ -537,8 +537,8 @@ def bladelius():
     body = f"""  <main class="page">
     <div class="wrap">
       <header class="page-header">
-        <h1>The AB Tech family</h1>
-        <p class="lede">Bladelius, Norse Audio and AB Tech are one family of Swedish audio brands.</p>
+        <h1>The Bladelius family</h1>
+        <p class="lede">AB Tech, Bladelius and Norse Audio are part of the Bladelius family of Swedish audio brands.</p>
       </header>
 
       <div class="sister-grid">
@@ -566,8 +566,8 @@ def bladelius():
       </div>
     </div>
   </main>"""
-    write("bladelius/index.html", page(1, "bladelius", "AB-Tech – Family", body,
-          description="The AB Tech family: Bladelius, Norse Audio and AB Tech."))
+    write("bladelius/index.html", page(1, "bladelius", "AB-Tech – The Bladelius family", body,
+          description="The Bladelius family: AB Tech, Bladelius and Norse Audio."))
 
 
 def reviews():
