@@ -12,7 +12,7 @@ NAV = [
     ("About Us", "about-us/", "about-us"),
     ("News", "news/", "news"),
     ("Contact", "contact/", "contact"),
-    ("Sister brands", "bladelius/", "bladelius"),
+    ("Family", "bladelius/", "bladelius"),
     ("Reviews", "reviews/", "reviews"),
 ]
 
@@ -24,7 +24,7 @@ ICON_FB = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-
 ICON_IG = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 1.6A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8zM17.2 6.6a.9.9 0 1 1-.9.9.9.9 0 0 1 .9-.9z"/></svg>'''
 ICON_MENU = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>'''
 
-ASSET_V = "3"
+ASSET_V = "4"
 SITE = "https://ab-tech.se"
 
 
@@ -214,36 +214,10 @@ def home():
             f'        </article>'
         )
 
-    products = [
-        ("still/", "images/products/still.jpg", "STILL", "Ethernet Isolator"),
-        ("ren/", "images/products/ren.jpg", "REN", "Ethernet Isolator"),
-        ("klar/", "images/products/klar.jpg", "KLAR", "USB Isolator"),
-        ("frid/", "images/products/frid.jpg", "FRID", "Power Cleaner"),
-        ("tamp/", "images/products/tamp.jpg", "TAMP", "Ethernet Cable"),
-    ]
-    prod_slides = []
-    for idx, (url, img, name, kind) in enumerate(products):
-        active = " is-active" if idx == 0 else ""
-        prod_slides.append(
-            f'        <article class="slide{active}">\n'
-            f'          <a href="{url}">\n'
-            f'            <div class="ribbon-image"><img src="{img}" alt="{name} {kind}"></div>\n'
-            f'            <div class="ribbon-caption">\n'
-            f'              <strong>{name}</strong>\n'
-            f'              <span>{kind}</span>\n'
-            f'            </div>\n'
-            f'          </a>\n'
-            f'        </article>'
-        )
-
     extra = '  <style>.hero { background-image: url("images/hero/home.jpg"); background-position: 56% 68%; }</style>\n'
     body = (
         '  <main>\n'
-        '    <section class="hero" aria-label="AB-Tech">\n'
-        '      <div class="hero-caption">\n'
-        '        <a href="products/">Products</a>\n'
-        '      </div>\n'
-        '    </section>\n'
+        '    <section class="hero" aria-label="AB-Tech"></section>\n'
         '\n'
         '    <section class="home-latest">\n'
         '      <div class="wrap">\n'
@@ -258,25 +232,6 @@ def home():
         '          <div class="slider-controls">\n'
         '            <button type="button" class="slider-prev" aria-label="Previous"></button>\n'
         '            <div class="slider-dots" role="tablist" aria-label="Choose slide"></div>\n'
-        '            <button type="button" class="slider-next" aria-label="Next"></button>\n'
-        '          </div>\n'
-        '        </div>\n'
-        '      </div>\n'
-        '    </section>\n'
-        '\n'
-        '    <section class="home-ribbon">\n'
-        '      <div class="wrap">\n'
-        '        <div class="section-head">\n'
-        '          <h2>Products</h2>\n'
-        '          <a class="text-link" href="products/">View all</a>\n'
-        '        </div>\n'
-        '        <div class="slider ribbon-slider" data-slider data-interval="6500" aria-label="Product images">\n'
-        '          <div class="slider-viewport">\n'
-        + "\n".join(prod_slides) + "\n"
-        '          </div>\n'
-        '          <div class="slider-controls">\n'
-        '            <button type="button" class="slider-prev" aria-label="Previous"></button>\n'
-        '            <div class="slider-dots" role="tablist" aria-label="Choose product"></div>\n'
         '            <button type="button" class="slider-next" aria-label="Next"></button>\n'
         '          </div>\n'
         '        </div>\n'
@@ -346,7 +301,7 @@ def products():
       </section>
 
       <section class="product-group sister-mini">
-        <h2>Sister brands</h2>
+        <h2>Our family</h2>
         <div class="sister-mini-grid">
           <article class="sister-mini-card">
             <a class="thumb" href="https://www.bladelius.com/" target="_blank" rel="noopener">
@@ -369,7 +324,7 @@ def products():
             </div>
           </article>
         </div>
-        <p class="sister-more"><a class="text-link" href="../bladelius/">More about our sister brands</a></p>
+        <p class="sister-more"><a class="text-link" href="../bladelius/">More about the family</a></p>
       </section>
     </div>
   </main>'''
@@ -582,8 +537,8 @@ def bladelius():
     body = f"""  <main class="page">
     <div class="wrap">
       <header class="page-header">
-        <h1>Sister brands</h1>
-        <p class="lede">AB-Tech is part of a small family of Swedish audio companies, each with its own website.</p>
+        <h1>The AB Tech family</h1>
+        <p class="lede">Bladelius, Norse Audio and AB Tech are one family of Swedish audio brands.</p>
       </header>
 
       <div class="sister-grid">
@@ -592,7 +547,7 @@ def bladelius():
             <img src="../images/gallery/bladelius/1.webp" alt="Bladelius amplifier">
           </div>
           <div class="sister-body">
-            <img class="sister-wordmark" src="../images/brand/bladelius-logo.jpg" alt="Bladelius">
+            <img class="sister-wordmark" src="../images/brand/bladelius-wordmark.png" alt="Bladelius">
             <p>Bladelius designs high-performance audio electronics, from amplifiers and preamplifiers to related components, for listeners around the world.</p>
             <a class="btn" href="https://www.bladelius.com/" target="_blank" rel="noopener">Visit website</a>
           </div>
@@ -611,8 +566,8 @@ def bladelius():
       </div>
     </div>
   </main>"""
-    write("bladelius/index.html", page(1, "bladelius", "AB-Tech – Sister brands", body,
-          description="Sister brands of AB-Tech: Bladelius and Norse Audio."))
+    write("bladelius/index.html", page(1, "bladelius", "AB-Tech – Family", body,
+          description="The AB Tech family: Bladelius, Norse Audio and AB Tech."))
 
 
 def reviews():

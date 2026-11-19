@@ -828,7 +828,7 @@ a.btn-ghost:hover {
 }
 .follow-links a:hover { color: #fff; border-bottom-color: #fff; }
 
-/* Sister brands
+/* Family brands
    -------------------------------------------------- */
 .sister-grid {
   display: grid;
@@ -866,13 +866,14 @@ a.btn-ghost:hover {
 }
 .sister-wordmark {
   display: block;
-  width: min(100%, 220px);
-  height: auto;
+  width: auto;
+  height: 36px;
+  max-width: 100%;
   object-fit: contain;
   object-position: left center;
 }
 .sister-wordmark.norse {
-  width: min(100%, 200px);
+  height: 34px;
 }
 
 .sister-mini-grid {
