@@ -489,16 +489,8 @@ def contact():
           <h1>Contact form</h1>
           <p class="lede">You can contact us by filling out this form:</p>
 
-          <!--
-            PLACEHOLDER KEY: replace YOUR_WEB3FORMS_ACCESS_KEY with a free access key
-            from https://web3forms.com before going live. Set the recipient to
-            ab-tech@bladelius.com. Formspree works too: change the form action to
-            https://formspree.io/f/YOUR_FORM_ID and remove the access_key field.
-            Do not commit a real key to a public repository if you can avoid it;
-            many hosts let you inject it at deploy time.
-          -->
           <form class="form" data-contact action="https://api.web3forms.com/submit" method="POST">
-            <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
+            <input type="hidden" name="access_key" value="e2c736a1-55c9-42b6-8eb7-ce3ac157828b">
             <input type="hidden" name="from_name" value="AB-Tech website">
             <input type="hidden" name="subject" value="Contact form — ab-tech.se">
             <div class="hp" aria-hidden="true">
@@ -523,7 +515,7 @@ def contact():
             </div>
             <button class="btn" type="submit">Submit</button>
             <div class="form-status" role="status" aria-live="polite"></div>
-            <p class="form-note">Messages are sent to ab-tech@bladelius.com once an access key has been added.</p>
+            <p class="form-note">Messages are sent to ab-tech@bladelius.com.</p>
           </form>
         </div>
       </div>

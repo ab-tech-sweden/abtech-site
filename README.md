@@ -2,7 +2,7 @@
 
 Det här är ett förslag på en ny sajt som kan ersätta [ab-tech.se](https://www.ab-tech.se/), som idag ligger hos Mozello för cirka 900 kr/år. Innehåll, språk (engelska) och uttryck följer den nuvarande sajten, men layouten är renare, modernare och anpassad för mobil.
 
-**Det här är bara ett förslag.** Inget är publicerat. Mozello, domänen, DNS och konton är orörda. Formuläret är förberett men har ingen riktig nyckel än.
+**Det här är bara ett förslag.** Inget är publicerat på ab-tech.se än. Mozello-sajten är orörd tills flytten är klar. Kontaktformuläret är kopplat och skickar till ab-tech@bladelius.com.
 
 När sajten väl ligger hos till exempel GitHub Pages, Cloudflare Pages eller Netlify blir själva hostingen gratis. Kvar att betala är i praktiken bara .se-domänen, typ 100–200 kr per år beroende på registrar.
 
@@ -45,17 +45,9 @@ Typsnittet är **Lato** (samma som idag). Färgerna är svart bakgrund `#000000`
 
 ## Kontaktformuläret
 
-Formuläret på Contact skickar till **ab-tech@bladelius.com**, precis som idag, men via [Web3Forms](https://web3forms.com) (gratis för den här volymen). I `contact/index.html` finns en tydligt markerad platshållare:
-
-```html
-<input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
-```
-
-Byt ut `YOUR_WEB3FORMS_ACCESS_KEY` mot en riktig nyckel innan sajten går live. Skapa nyckeln på web3forms.com och ange ab-tech@bladelius.com som mottagare. Tills dess visar formuläret ett felmeddelande i stället för att skicka något.
+Formuläret på Contact skickar till **ab-tech@bladelius.com**, precis som idag, via [Web3Forms](https://web3forms.com).
 
 Vill du hellre använda [Formspree](https://formspree.io): ändra formulärets `action` till `https://formspree.io/f/DIN_FORM_ID` och ta bort fältet `access_key`.
-
-Lägg inte en riktig nyckel i ett publikt git-repo om du kan undvika det. De flesta hostar låter dig sätta värdet vid publicering.
 
 ## Så tittar du på förslaget lokalt
 
@@ -81,9 +73,9 @@ Alla tre här nedan funkar för den här sajten (ren HTML/CSS, lite JS):
 
 Skapa ett konto, ladda upp innehållet i den här mappen och kontrollera att sidan ser rätt ut på den tillfälliga adressen ni får (typ `något.pages.dev`).
 
-### 2. Koppla formulärnyckeln
+### 2. Kontaktformuläret
 
-Skapa nyckeln som beskrivs ovan, klistra in den (eller sätt den vid deploy) och skicka ett testmeddelande. Kolla att det kommer fram till ab-tech@bladelius.com.
+Formuläret är redan kopplat till Web3Forms och skickar till ab-tech@bladelius.com. Skicka ett testmeddelande och kolla att det kommer fram.
 
 ### 3. Flytta .se-domänen från Mozello
 
