@@ -4,7 +4,8 @@ from pathlib import Path
 import json, re, html as htmlmod
 
 ROOT = Path(__file__).resolve().parent
-NEWS_JSON = Path("/tmp/abtech-crawl/news_posts_html.json")
+NEWS_JSON = ROOT / "data" / "news_posts_html.json"
+NEWS_JSON_LEGACY = Path("/tmp/abtech-crawl/news_posts_html.json")
 
 NAV = [
     ("Home", "index.html", "home"),
@@ -24,7 +25,7 @@ ICON_FB = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-
 ICON_IG = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 1.6A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8zM17.2 6.6a.9.9 0 1 1-.9.9.9.9 0 0 1 .9-.9z"/></svg>'''
 ICON_MENU = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>'''
 
-ASSET_V = "7"
+ASSET_V = "8"
 SITE = "https://ab-tech.se"
 
 
@@ -51,7 +52,7 @@ def header(depth: int, current: str) -> str:
     return f'''  <header class="site-header">
     <div class="inner">
       <a class="logo" href="{href(depth, "index.html")}" aria-label="AB-Tech home">
-        <img src="{p}images/brand/logo.jpg" width="222" height="101" alt="AB — Made in Sweden">
+        <img src="{p}images/brand/logo.png?v={ASSET_V}" width="222" height="97" alt="AB — Made in Sweden">
       </a>
       <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">{ICON_MENU}</button>
       <nav class="site-nav" id="site-nav">
@@ -91,7 +92,7 @@ def org_jsonld() -> dict:
         "name": "Alexander Bladelius Technologies AB",
         "brand": "AB Tech",
         "url": f"{SITE}/",
-        "logo": f"{SITE}/images/brand/logo.jpg",
+        "logo": f"{SITE}/images/brand/logo.png",
     }
 
 
@@ -160,7 +161,7 @@ def _news_img(url: str, depth: int = 0) -> str:
 
 def home():
     # Latest news from the crawl, mixed with a couple of press reviews.
-    posts = json.loads(NEWS_JSON.read_text(encoding="utf-8")) if NEWS_JSON.exists() else []
+    posts = load_news_posts()
     slides = []
     review_inserts = {
         1: (
@@ -597,6 +598,9 @@ def reviews():
 def map_news_src(url: str) -> str:
     if not url:
         return url
+    if "images/news/" in url:
+        name = url.split("images/news/")[-1].split("?")[0]
+        return "../images/news/" + name
     name = url.split("/files/1023973/")[-1]
     name = name.replace("medium/", "").split("?")[0]
     # jpeg was often saved as .jpg
@@ -643,8 +647,58 @@ def news_text_only(body_html: str) -> str:
     return cleaned.strip()
 
 
+def recover_news_posts_from_html() -> list:
+    """Rebuild crawl records from the last generated news page."""
+    path = ROOT / "news" / "index.html"
+    if not path.exists():
+        return []
+    html = path.read_text(encoding="utf-8")
+    posts = []
+    for m in re.finditer(r'<article class="news-item">(.*?)</article>', html, re.S):
+        art = m.group(1)
+        title_m = re.search(r'<h2>(.*?)</h2>', art, re.S)
+        date_m = re.search(r'<time>(.*?)</time>', art)
+        thumb_m = re.search(r'<div class="thumb">(.*?)</div>', art, re.S)
+        body_m = re.search(r'<div class="body">(.*?)</div>', art, re.S)
+        if not title_m or not date_m or not body_m:
+            continue
+        title = htmlmod.unescape(title_m.group(1))
+        date = htmlmod.unescape(date_m.group(1))
+        thumb = (thumb_m.group(1) if thumb_m else "").strip()
+        body = body_m.group(1).strip()
+        body_html = f"<p>{thumb}</p>\n{body}" if thumb else body
+        images = [{"src": htmlmod.unescape(src)} for src in re.findall(r'<img[^>]+src="([^"]+)"', thumb or body_html)]
+        posts.append({"title": title, "date": date, "body_html": body_html, "images": images})
+    return posts
+
+
+def load_news_posts() -> list:
+    """Load news crawl data from the repo, a legacy /tmp path, or generated HTML."""
+    for path in (NEWS_JSON, NEWS_JSON_LEGACY):
+        if path.exists():
+            posts = json.loads(path.read_text(encoding="utf-8"))
+            if posts:
+                if path != NEWS_JSON:
+                    _save_news_posts(posts)
+                    print(f"copied news data from {path} -> {NEWS_JSON}")
+                return posts
+    recovered = recover_news_posts_from_html()
+    if recovered:
+        _save_news_posts(recovered)
+        print(f"recovered {len(recovered)} news posts from news/index.html -> {NEWS_JSON}")
+        return recovered
+    raise SystemExit(
+        f"No news data found. Expected {NEWS_JSON} or a generated news/index.html to recover from."
+    )
+
+
+def _save_news_posts(posts: list) -> None:
+    NEWS_JSON.parent.mkdir(parents=True, exist_ok=True)
+    NEWS_JSON.write_text(json.dumps(posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
 def news():
-    posts = json.loads(NEWS_JSON.read_text(encoding="utf-8"))
+    posts = load_news_posts()
     items = []
     for post in posts:
         body = rewrite_news_body(post["body_html"])
