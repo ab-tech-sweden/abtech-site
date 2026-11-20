@@ -166,7 +166,7 @@
       if (status) {
         status.className = "form-status err";
         status.textContent =
-          "The form is not connected yet. Replace YOUR_WEB3FORMS_ACCESS_KEY in contact/index.html with a free key from web3forms.com (set the recipient to ab-tech@bladelius.com).";
+          "The form is not connected yet. Replace YOUR_WEB3FORMS_ACCESS_KEY in contact/index.html with a free key from web3forms.com.";
       }
       return;
     }
@@ -202,7 +202,7 @@
         if (status) {
           status.className = "form-status err";
           status.textContent =
-            "The message could not be sent. Please try again later or email ab-tech@bladelius.com. " +
+            "The message could not be sent. Please try again later. " +
             (err && err.message ? "(" + err.message + ")" : "");
         }
       })
