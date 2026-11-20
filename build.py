@@ -25,7 +25,7 @@ ICON_FB = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-
 ICON_IG = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 1.6A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8zM17.2 6.6a.9.9 0 1 1-.9.9.9.9 0 0 1 .9-.9z"/></svg>'''
 ICON_MENU = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>'''
 
-ASSET_V = "8"
+ASSET_V = "9"
 SITE = "https://ab-tech.se"
 
 
@@ -52,7 +52,7 @@ def header(depth: int, current: str) -> str:
     return f'''  <header class="site-header">
     <div class="inner">
       <a class="logo" href="{href(depth, "index.html")}" aria-label="AB-Tech home">
-        <img src="{p}images/brand/logo.png?v={ASSET_V}" width="222" height="97" alt="AB — Made in Sweden">
+        <img src="{p}images/brand/logo.png?v={ASSET_V}" width="222" height="101" alt="AB — Made in Sweden">
       </a>
       <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">{ICON_MENU}</button>
       <nav class="site-nav" id="site-nav">
