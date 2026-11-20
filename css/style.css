@@ -137,7 +137,7 @@ p:last-child { margin-bottom: 0; }
 .hero {
   position: relative;
   min-height: calc(100vh - var(--header-h));
-  background: #000 center 68% / cover no-repeat;
+  background: #000 56% 68% / cover no-repeat;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -589,7 +589,13 @@ main { flex: 1 0 auto; }
   .site-nav a[aria-current="page"],
   .site-nav a:hover { border-bottom-color: #fff; }
   .product-grid, .review-grid { grid-template-columns: 1fr; }
-  .hero { min-height: 70vh; }
+  .hero {
+    min-height: 0;
+    aspect-ratio: 3 / 2;
+    background-position: 50% 50%;
+    background-size: cover;
+  }
+  .hero::after { height: 14%; }
   .site-footer .inner { flex-direction: column; align-items: flex-start; }
 }
 
