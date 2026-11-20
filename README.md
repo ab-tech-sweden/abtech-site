@@ -2,7 +2,7 @@
 
 Det här är ett förslag på en ny sajt som kan ersätta [ab-tech.se](https://www.ab-tech.se/), som idag ligger hos Mozello för cirka 900 kr/år. Innehåll, språk (engelska) och uttryck följer den nuvarande sajten, men layouten är renare, modernare och anpassad för mobil.
 
-**Det här är bara ett förslag.** Inget är publicerat på ab-tech.se än. Mozello-sajten är orörd tills flytten är klar. Kontaktformuläret är kopplat och skickar till ab-tech@bladelius.com.
+Sajten ligger på GitHub Pages, med anpassad domän **ab-tech.se**. Kontaktformuläret är kopplat och skickar till ab-tech@bladelius.com. Public DNS pekar fortfarande på Cloudflare/Mozello tills namnservrarna hos registret är ns1–ns4.inleed.net; tills dess visar https://www.ab-tech.se/ den gamla sajten. Säg inte upp Mozello förrän den nya sajten syns på domänen.
 
 När sajten väl ligger hos till exempel GitHub Pages, Cloudflare Pages eller Netlify blir själva hostingen gratis. Kvar att betala är i praktiken bara .se-domänen, typ 100–200 kr per år beroende på registrar.
 
@@ -59,59 +59,22 @@ python3 -m http.server 8080
 
 Öppna sedan http://localhost:8080 i webbläsaren.
 
-## När ni vill gå live (inget av detta är gjort nu)
+## Publiceringsstatus
 
-Gör det i den här ordningen, så att ab-tech.se aldrig ligger nere.
+Sajten hostas på GitHub Pages (repo `ab-tech-sweden/abtech-site`). Detta är gjort:
 
-### 1. Välj gratis hosting
+- Filen `CNAME` innehåller `ab-tech.se`.
+- Anpassad domän i Pages är satt till `ab-tech.se`.
+- `robots.txt` tillåter indexering (`Allow: /`) och pekar på `https://ab-tech.se/sitemap.xml`.
+- Kontaktformuläret skickar till ab-tech@bladelius.com via Web3Forms.
 
-Alla tre här nedan funkar för den här sajten (ren HTML/CSS, lite JS):
+Detta återstår innan sajten syns på domänen:
 
-- **Cloudflare Pages** — smidigt om ni ändå ska ha DNS eller domänen hos Cloudflare.
-- **Netlify** — enkelt att dra in mappen och få HTTPS.
-- **GitHub Pages** — lägg filerna i ett repo och slå på Pages. Filen `.nojekyll` finns redan så att GitHub inte kör Jekyll på mappen.
-
-Skapa ett konto, ladda upp innehållet i den här mappen och kontrollera att sidan ser rätt ut på den tillfälliga adressen ni får (typ `något.pages.dev`).
-
-### 2. Kontaktformuläret
-
-Formuläret är redan kopplat till Web3Forms och skickar till ab-tech@bladelius.com. Skicka ett testmeddelande och kolla att det kommer fram.
-
-### 3. Flytta .se-domänen från Mozello
-
-Domänen ab-tech.se ligger idag hos Mozello. För att ta över den:
-
-1. Be Mozello om en **auth-kod / överföringskod** (EPP) för ab-tech.se. Det görs i deras kontrollpanel eller via support.
-2. Välj en registrar, till exempel **Loopia** eller **Cloudflare Registrar**, och starta en domänflytt med koden. En .se-flytt tar oftast ett par dagar.
-3. När domänen är flyttad pekar ni DNS mot den nya hosten enligt deras instruktioner (vanligtvis ett CNAME för `www` och antingen ett CNAME/ALIAS eller A-poster för roten `ab-tech.se`). Aktivera HTTPS (det sköts automatiskt hos Pages/Netlify/Cloudflare).
-4. Se till att både `ab-tech.se` och `www.ab-tech.se` fungerar, och att den ena omdirigerar till den andra.
-
-Rör inte Mozello-DNS förrän den nya sajten är uppladdad och testad på den tillfälliga adressen.
-
-### robots.txt och sitemap (vid publicering)
-
-Filen `sitemap.xml` ligger redan i roten, med absoluta adresser på https://ab-tech.se/. `robots.txt` blockerar fortfarande sökmotorer med `Disallow: /` så länge sajten bara är en förhandsvisning. Sitemap-raden finns redan:
-
-```
-Sitemap: https://ab-tech.se/sitemap.xml
-```
-
-När sajten går live, ändra `robots.txt` till:
-
-```
-User-agent: *
-Allow: /
-
-Sitemap: https://ab-tech.se/sitemap.xml
-```
-
-Lägg därefter till sajten i Google Search Console och skicka in `https://ab-tech.se/sitemap.xml`.
-
-### 4. Säg upp Mozello först när den nya sajten är live
-
-När https://ab-tech.se (och www) visar den nya sajten, formuläret fungerar och ni har klickat igenom sidorna: säg upp Mozello-abonnemanget så att ni inte betalar dubbelt. Säg inte upp det tidigare, för då kan både den gamla sajten och domänen påverkas.
-
-### 5. Mejl
+- Publik DNS (kontrollerad via dns.google) pekar fortfarande på Cloudflares namnservrar (`irena.ns.cloudflare.com`, `patrick.ns.cloudflare.com`) och Cloudflare-IP:er, inte på Inleed (`ns1`–`ns4.inleed.net`) eller GitHub Pages (`185.199.108–111.153` och motsvarande AAAA). `www` saknar CNAME till `ab-tech-sweden.github.io`.
+- GitHub har därför inte utfärdat HTTPS-certifikat ännu, och Enforce HTTPS är inte påslaget.
+- När DNS väl pekar på GitHub Pages: vänta på certifikatet och slå sedan på Enforce HTTPS, så att `www` omdirigerar till `https://ab-tech.se/` och HTTP går till HTTPS.
+- Lägg till sajten i Google Search Console och skicka in `https://ab-tech.se/sitemap.xml`.
+- Säg upp Mozello först när https://ab-tech.se visar den nya sajten, formuläret fungerar och ni har klickat igenom sidorna.
 
 Mejl på bladelius.com, inklusive ab-tech@bladelius.com, påverkas inte. Den här flytten gäller bara webbplatsen och domänen ab-tech.se.
 
