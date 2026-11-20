@@ -719,10 +719,14 @@ def write_sitemap():
 
 def write_robots():
     write("robots.txt", """User-agent: *
-Disallow: /
+Allow: /
 
 Sitemap: https://ab-tech.se/sitemap.xml
 """)
+
+
+def write_cname():
+    write("CNAME", "ab-tech.se\n")
 
 
 def not_found():
@@ -762,6 +766,7 @@ def main():
     news()
     write_sitemap()
     write_robots()
+    write_cname()
     not_found()
     print("done")
 
