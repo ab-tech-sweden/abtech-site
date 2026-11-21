@@ -953,6 +953,75 @@ a.btn-ghost:hover {
   .sister-mini-card .thumb img { aspect-ratio: 3 / 2; }
 }
 
+/* Legal / policy pages (TON privacy and support)
+   -------------------------------------------------- */
+.legal {
+  max-width: 42em;
+}
+.legal .eyebrow {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem;
+  font-weight: 400;
+}
+.legal .meta {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 0.25rem;
+}
+.legal h2 {
+  margin-top: 2.25rem;
+  font-size: 1.15rem;
+}
+.legal h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--heading);
+  margin: 1.5rem 0 0.6rem;
+}
+.legal ul {
+  padding-left: 1.2rem;
+  margin: 0 0 1em;
+}
+.legal li {
+  margin: 0.35rem 0;
+}
+.legal a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.legal-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  padding: 1rem 1.1rem;
+  margin: 1.25rem 0;
+}
+.legal-card p { margin: 0 0 0.6em; }
+.legal-card p:last-child { margin-bottom: 0; }
+
+/* Discreet footnote links on the Contact page */
+.page-legal-links {
+  margin-top: 48px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+.page-legal-links a {
+  color: var(--text-dim);
+}
+.page-legal-links a:hover {
+  color: #ccc;
+}
+.page-legal-links .sep {
+  margin: 0 0.55em;
+  color: #3a3a3a;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .slide { transition: none; }
 }

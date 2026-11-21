@@ -25,7 +25,7 @@ ICON_FB = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-
 ICON_IG = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 1.6A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8zM17.2 6.6a.9.9 0 1 1-.9.9.9.9 0 0 1 .9-.9z"/></svg>'''
 ICON_MENU = '''<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>'''
 
-ASSET_V = "9"
+ASSET_V = "10"
 SITE = "https://ab-tech.se"
 
 
@@ -519,10 +519,119 @@ def contact():
           </form>
         </div>
       </div>
+      <p class="page-legal-links">
+        <a href="../privacy-policy.html">Privacy Policy</a>
+        <span class="sep" aria-hidden="true">·</span>
+        <a href="../support.html">Support</a>
+      </p>
     </div>
   </main>'''
     write("contact/index.html", page(1, "contact", "AB-Tech – Contact", body,
           description="Contact Alexander Bladelius Technologies AB."))
+
+
+
+def privacy_policy():
+    body = """  <main class="page">
+    <div class="wrap legal">
+      <p class="eyebrow">Alexander Bladelius Technologies AB</p>
+      <h1>Privacy Policy for TON</h1>
+      <p class="meta">Last updated: 21 November 2026</p>
+      <p class="meta">Product: TON (iOS and iPadOS app, bundle identifier se.abtech.player)</p>
+
+      <p class="lede">This policy describes the App Store version of TON. TON does not include Tidal or Qobuz.</p>
+
+      <h2>1. Summary</h2>
+      <p>TON is a music player for your local network. It finds UPnP, DLNA and OpenHome media servers and players on the same network as your device, lets you browse your library, and plays music on the player you choose or on this iPhone or iPad.</p>
+      <p>We do not have a user account system in TON. We do not run analytics, advertising, or crash-reporting services, and we do not sell or share personal data for marketing or tracking.</p>
+      <p>Most of what TON does stays on your device or on your local network. The exceptions are internet radio and station search, which use servers on the public internet when you use those features.</p>
+
+      <h2>2. Data stored on your device</h2>
+      <p>TON stores the following on the device, using iOS system storage (UserDefaults, security-scoped bookmarks, and an on-device cover cache). This data does not leave the device unless you use a feature that needs it (for example, sending a file you chose to a player on your local network).</p>
+      <ul>
+        <li>The player you last selected, and addresses you have added manually.</li>
+        <li>Playback preferences such as repeat, whether the volume buttons control the network player, and whether the lock-screen Live Activity is enabled.</li>
+        <li>Equalizer settings and any equalizer presets you save.</li>
+        <li>Security-scoped bookmarks for folders you add from the Files app (including a USB drive or a network share already connected in Files). TON can read the audio files and artwork in those folders in order to play them or show them in the library.</li>
+        <li>Cached album artwork, used only to display covers in the app.</li>
+        <li>A local diagnostic log and, if the app last closed unexpectedly, a local crash record. These are shown in Settings → Diagnostics and can be copied by you. TON does not upload them.</li>
+      </ul>
+      <p>iOS may also keep standard system data (for example Media Player “Now Playing” information while local playback is active). That is handled by Apple, not sent to us.</p>
+
+      <h2>3. Local network</h2>
+      <p>When you allow Local Network access, TON uses it to:</p>
+      <ul>
+        <li>discover media servers and players (SSDP / UPnP and Bonjour),</li>
+        <li>control a selected player (UPnP SOAP / OpenHome),</li>
+        <li>load artwork and metadata from your media servers,</li>
+        <li>stream files from a folder you have added on this device to a player on your network, using a short-lived HTTP server on the device (port 52100) while TON is open.</li>
+      </ul>
+      <p>Traffic on the local network goes to devices on your own network, not to us. We do not receive a copy of your library, playlists, or the files you play.</p>
+      <p>Some discovery paths talk to other services that a device on your network may already offer (for example a Volumio system-info endpoint on that device) only to find a compatible UPnP description. That traffic also stays on the local network.</p>
+      <p>You can deny Local Network access in iOS Settings. Without it, TON cannot find or control network players or servers. Internet radio and folders on this device can still be used for playback on this iPhone or iPad.</p>
+
+      <h2>4. Internet features</h2>
+      <h3>Internet radio playback</h3>
+      <p>TON includes a list of preset radio stations and lets you add a station by stream address. When you play a station, your device connects directly to that station’s server. The station’s operator can see a standard internet request (including your IP address). We do not operate those servers and we do not receive that traffic.</p>
+      <p>Preset stations in the current source include, among others, Radio Paradise, Sveriges Radio P2, FIP, France Musique, Deutschlandfunk Kultur, BR-Klassik, NRK Klassisk, DR P8 Jazz, Yle Klassinen, Rai Radio 3, and BBC World Service.</p>
+
+      <h3>Station search (radio-browser.info)</h3>
+      <p>If you search for a station, TON sends the search text to the community project <a href="https://www.radio-browser.info/">radio-browser.info</a>, trying one of their public API hosts (de1, de2, or fi1). The request uses HTTPS and a User-Agent of <code>ABTechPlayer/1.0</code>. radio-browser.info can see your IP address, that User-Agent, and the search text. TON does not send your name, Apple ID, or an account identifier.</p>
+      <p>If a search result includes a station logo address, TON may fetch that image to display it.</p>
+      <p>Station search needs an internet connection. The rest of the app is designed to work without it.</p>
+
+      <h3>Artwork from your library</h3>
+      <p>Album covers are loaded from addresses supplied by your media server or from files on this device. Those addresses are usually on your local network. If a server gives a public HTTP or HTTPS address, TON may fetch it in order to show the image.</p>
+
+      <h2>5. What we do not collect</h2>
+      <p>In the App Store version of TON we do not:</p>
+      <ul>
+        <li>create or require an account,</li>
+        <li>collect your name, email address, or Apple ID,</li>
+        <li>use tracking (including App Tracking Transparency / advertising identifiers),</li>
+        <li>include analytics, advertising, or crash-reporting SDKs,</li>
+        <li>upload diagnostic or crash logs to us,</li>
+        <li>access your contacts, calendar, camera, microphone, precise location, or photo library (folders are added only through the Files picker you control),</li>
+        <li>use the in-app web view to browse the public web (it loads the app’s own interface from the device, and its website data store is non-persistent).</li>
+      </ul>
+
+      <h2>6. Legal basis (GDPR)</h2>
+      <p>If the GDPR applies, we process the limited data described above in order to provide the app you chose to use (performance of a contract / requested service) and, where a permission is required (Local Network, access to a folder you pick), on the basis of your consent given through the system prompt. Internet radio and station search take place only when you use those features.</p>
+
+      <h2>7. Retention and your rights</h2>
+      <p>Settings, bookmarks and caches remain on the device until you change them or delete the app. Deleting TON removes the app’s local data.</p>
+      <p>You can withdraw Local Network access in iOS Settings, remove folders you added in TON’s settings, stop using internet radio or station search at any time, and delete the app.</p>
+      <p>If GDPR or similar law applies, you may also have the right to access, correct, delete, restrict or object to processing, and to complain to a supervisory authority (in Sweden, Integritetsskyddsmyndigheten, IMY). Because we do not operate a backend for TON and do not receive your library or account data, most of these rights are exercised on the device itself.</p>
+
+      <h2>8. Children</h2>
+      <p>TON is not directed at children and does not knowingly collect personal data from children.</p>
+
+      <h2>9. Changes</h2>
+      <p>We will update this policy if the app’s behaviour changes in a way that affects privacy, and we will change the date above. The hosted copy is the current version.</p>
+
+      <h2>10. Contact</h2>
+      <div class="legal-card">
+        <p><strong>Controller:</strong> Alexander Bladelius Technologies AB</p>
+        <p>For privacy questions about TON, please use the <a href="contact/">contact form</a> on this website.</p>
+      </div>
+    </div>
+  </main>"""
+    write("privacy-policy.html", page(0, "", "AB-Tech – Privacy Policy", body,
+          description="Privacy Policy for the TON iOS and iPadOS app by Alexander Bladelius Technologies AB."))
+
+
+def support():
+    body = """  <main class="page">
+    <div class="wrap legal">
+      <p class="eyebrow">Alexander Bladelius Technologies AB</p>
+      <h1>TON support</h1>
+      <p>TON is a hi-fi music player for your local network. It finds UPnP, DLNA and OpenHome players and media servers on the same Wi-Fi as your iPhone or iPad.</p>
+      <p>For help with TON, please use the <a href="contact/">contact form</a> on this website.</p>
+      <p class="meta">Please include the app version (Settings → About) and a short description of what you were doing.</p>
+    </div>
+  </main>"""
+    write("support.html", page(0, "", "AB-Tech – TON support", body,
+          description="Support for the TON iOS and iPadOS music player."))
 
 
 def bladelius():
@@ -755,6 +864,8 @@ SITEMAP_PATHS = [
     "contact/",
     "bladelius/",
     "reviews/",
+    "privacy-policy.html",
+    "support.html",
 ]
 
 
@@ -814,6 +925,8 @@ def main():
     tamp()
     about()
     contact()
+    privacy_policy()
+    support()
     bladelius()
     reviews()
     news()
